@@ -3,6 +3,7 @@ import tensorflow as tf
 from keras._tf_keras.keras.models import Sequential
 from keras._tf_keras.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from keras._tf_keras.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
 
 # Define image dimensions and batch size
 img_width, img_height = 150, 150
@@ -21,7 +22,7 @@ train_datagen = ImageDataGenerator(
 )
 
 train_generator = train_datagen.flow_from_directory(
-    'data/seg_train',  # Path to the dataset
+    'data/seg_train/seg_train',  # Path to the dataset
     target_size=(img_width, img_height),
     batch_size=batch_size,
     class_mode='categorical',
@@ -29,12 +30,14 @@ train_generator = train_datagen.flow_from_directory(
 )
 
 validation_generator = train_datagen.flow_from_directory(
-    'data/seg_test',  # Path to the dataset
+    'data/seg_test/seg_test',  # Path to the dataset
     target_size=(img_width, img_height),
     batch_size=batch_size,
     class_mode='categorical',
     subset='validation'
 )
+
+
 
 # Build the CNN model
 model = Sequential([
@@ -66,6 +69,21 @@ history = model.fit(
     epochs=epochs
 )
 
+# Evaluate the model
+#plot training/validation Accuracy / Loss
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
+
+#Evaluation on validation set
+loss, accuracy = model.evaluate(validation_generator)
+print(f'Validation Loss: {loss:.4f}')
+print(f'Validation Accuracy: {accuracy:.4f}')
+
 # Save the trained model
-model.save('models/image_classifier_model.h5')
-print("Model saved to models/image_classifier_model.h5")
+model_name="image_classifier_model_01.keras"
+model.save(f'models/{model_name}')
+print(f"Model saved to models/{model_name}")

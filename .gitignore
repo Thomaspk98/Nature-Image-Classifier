@@ -173,3 +173,4 @@ cython_debug/
 #Folders
 image_classification/
 data/
+models/
