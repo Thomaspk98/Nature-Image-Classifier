@@ -171,6 +171,4 @@ cython_debug/
 .pypirc
 
 #Folders
-image_classification/
 data/
-models/
